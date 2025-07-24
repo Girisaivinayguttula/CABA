@@ -25,12 +25,16 @@ exports.signup = async (req, res) => {
             html: `<p>Your OTP code is <strong>${otp}</strong></p>`
         };
 
-        transporter.sendMail(mailOptions, (error) => {
-            if (error) return res.status(500).send({ error: 'Failed to send OTP email' });
+        transporter.sendMail(mailOptions, (error, info) => {
+            if (error) {
+                console.error('❌ Failed to send email:', error);
+                return res.status(500).send({ error: 'Failed to send OTP email', details: error.message });
+            } console.log('✅ Email sent:', info.response);
             res.status(200).send({ message: 'OTP sent to your email.' });
         });
 
     } catch (error) {
+        console.log(error)
         res.status(500).send({ error: 'Error saving user', details: error.message });
     }
 };
